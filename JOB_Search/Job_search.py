@@ -15,6 +15,7 @@ st.markdown(f"<div style='display: flex; justify-content: center;'><img src='{im
 
 st.write("") 
 st.write("") 
+
 # App title
 st.markdown("<h2 style='text-align: center;'> Job Search Assistant 🔍 </h2><p style='text-align: center; font-size: 18px;'>Goodbye to Experience-Level Uncertainity with LLMs and Metaphor API 👋</p>", unsafe_allow_html=True)
 
@@ -94,5 +95,6 @@ if st.button("Search"):
             st.write(f"Job Posting Link: {url}")
             st.write(f"{title}")
             st.write(f"{experience}")
+            
             if i < num_postings - 1:
                 st.markdown("---") # Seperating each job from one another.
