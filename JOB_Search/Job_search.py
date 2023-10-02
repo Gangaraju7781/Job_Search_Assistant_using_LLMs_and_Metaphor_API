@@ -51,24 +51,26 @@ if st.button("Search"):
         pattern = r"(\d+\.?\d*) (years|year)"
 
         # Initiating Counters
-        job_id_all = 0
         job_id_displayed = 0
+        total_job_postings = len(contents_result.contents)
 
         # Iterate through each link in the search results
         for i, link in enumerate(contents_result.contents):
-            # Increment the job ID for all postings
-            job_id_all += 1
-
+            
             # Extract the content of the link
             link_content = link.extract
-            
-            # Exclude Linkedin or Twitter Job Postings
+
+            # Exclude Linkedin or Twitter postings
             if "linkedin.com" in link.url or "twitter.com" in link.url:
-                # Skip LinkedIn and Twitter job postings
+                total_job_postings -= 1
                 continue
 
-            # Increment the job ID for displayed postings
+            # Increment the displayed job ID counter
             job_id_displayed += 1
+
+            if job_id_displayed > num_postings:
+                # Break the loop if the requested number of job postings has been displayed
+                break
 
             # Use the link content as user input for OpenAI API
             messages = [
@@ -92,40 +94,39 @@ if st.button("Search"):
             title = lines[1] if len(lines) > 1 else ""
             experience = lines[2] if len(lines) > 2 else ""
 
+            # Remove repeated headers (e.g., "Title:" and "Experience:")
+            title = title.replace("Title:", "").strip()
+            experience = experience.replace("Experience:", "").strip()
+
             # Regular expression pattern to highlight number of years
             experience = re.sub(r"(\d+\+?)(\s*)(years|year)", r'**\1\2\3**', experience)
 
             # Display the information in separate lines
             st.write(f"**Job ID: {job_id_displayed}**")
+            company_name = company.split(':')[-1].strip()  # Extract the company name
+            st.write(f"**Company:** {company_name}")  # Make Company Name bold
+            st.write(f"**Job Posting Link:** {url}")  # Make the job posting link bold
+            st.write(f"**Job Title:** {title}")  # Make the job title bold
+            # job_title_match = re.search(r"Title: (.+)", title)
+            # if job_title_match:
+            #     job_title = job_title_match.group(1)
+            #     st.write(f"**Job Title:** {job_title}")
+            # else:
+            #     st.write(f"**Title:** {title}")
 
-            # Extract the company name
-            company_name = company.split(':')[-1].strip()  
-            
-            # Make Company Name bold
-            st.write(f"**Company:** {company_name}")  
-
-             # Make the job posting link bold
-            st.write(f"**Job Posting Link:** {url}") 
-
-            # Extract job title and make it bold
-            job_title_match = re.search(r"Title: (.+)", title)
-            if job_title_match:
-                job_title = job_title_match.group(1)
-                st.write(f"**Job Title:** {job_title}")
-            else:
-                st.write(f"**Title:** {title}")
-
-            # Extract years of experience and make it bold
             years_of_experience = re.search(r"Years of Experience Required: (.+)", experience)
             if years_of_experience:
                 years_of_experience = years_of_experience.group(1)
                 st.write(f"**Years of Experience Required:** {years_of_experience}")
             else:
                 st.write(f"**Experience:** {experience}")
-                
-            # Seperating Job postings from each other.
-            if job_id_displayed < num_postings:
-                st.markdown("---") 
+
+            st.markdown("---")  # Add a separator between job postings
+
+        # If fewer job postings were displayed than requested, inform the user
+        if job_id_displayed < num_postings:
+            st.warning(f"Only {job_id_displayed} out of {total_job_postings} job postings were available and displayed.")
+
 
             # experience = re.sub(pattern, r'**\1 \2**', experience)
             
