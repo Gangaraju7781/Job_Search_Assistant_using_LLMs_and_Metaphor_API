@@ -41,7 +41,7 @@ if st.button("Search"):
 
         query = completion.choices[0].message.content
         search_response = metaphor.search(
-            query, num_results=num_postings, use_autoprompt=True, start_published_date="2023-06-01"
+            query, num_results=num_postings, use_autoprompt=True, start_published_date="2023-08-15"
         )
 
         SYSTEM_MESSAGE = "Just give me the Company Name, Job Title, Years of Experience Required for the job"
