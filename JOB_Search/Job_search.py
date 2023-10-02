@@ -50,22 +50,25 @@ if st.button("Search"):
 
         pattern = r"(\d+\.?\d*) (years|year)"
 
-        # Initiating Counter
-        job_id = 0
+        # Initiating Counters
+        job_id_all = 0
+        job_id_displayed = 0
 
-        # Iterate through each job link in the search results of Metaphor API
+        # Iterate through each link in the search results
         for i, link in enumerate(contents_result.contents):
-            job_id += 1
-            # Extracting the content of the link
+            # Increment the job ID for all postings
+            job_id_all += 1
+
+            # Extract the content of the link
             link_content = link.extract
-
-            if "linkedin.com" in link.url:
-            # Skip LinkedIn
+            
+            # Exclude Linkedin or Twitter Job Postings
+            if "linkedin.com" in link.url or "twitter.com" in link.url:
+                # Skip LinkedIn and Twitter job postings
                 continue
 
-            if "twitter.com" in link.url:
-            # Skip twitter 
-                continue
+            # Increment the job ID for displayed postings
+            job_id_displayed += 1
 
             # Use the link content as user input for OpenAI API
             messages = [
@@ -75,33 +78,36 @@ if st.button("Search"):
 
             # Make an API request for the current link
             completion = openai.ChatCompletion.create(
-                model="gpt-4",
+                model="gpt-3.5-turbo",
                 messages=messages,
             )
 
-            # Display the response for the link
+            # Extract and display the response for the current link
             summary = completion.choices[0].message.content
-            
             lines = summary.split('\n')
             
-            # Extract and display URL, company, title, and years of experience
+            # Extract and display URL, company, title, and experience
             url = link.url
             company = lines[0] if len(lines) > 0 else ""
             title = lines[1] if len(lines) > 1 else ""
             experience = lines[2] if len(lines) > 2 else ""
 
-            # Extract numbers and years to make them bold
+            # Regular expression pattern to highlight number of years
             experience = re.sub(r"(\d+\+?)(\s*)(years|year)", r'**\1\2\3**', experience)
 
             # Display the information in separate lines
-            # job_id = i + 1
-            st.write(f"**Job ID: {job_id}**")
-            company_name = company.split(':')[-1].strip()  # Extract the company name
-            st.write(f"**Company:** {company_name}")  # Make Company Name bold
-            st.write(f"**Job Posting Link:** {url}")  # Make the job posting link bold
-            # st.write(f"**Title:** {title}")  
+            st.write(f"**Job ID: {job_id_displayed}**")
+
+            # Extract the company name
+            company_name = company.split(':')[-1].strip()  
             
-            # Make the job title bold
+            # Make Company Name bold
+            st.write(f"**Company:** {company_name}")  
+
+             # Make the job posting link bold
+            st.write(f"**Job Posting Link:** {url}") 
+
+            # Extract job title and make it bold
             job_title_match = re.search(r"Title: (.+)", title)
             if job_title_match:
                 job_title = job_title_match.group(1)
@@ -109,16 +115,17 @@ if st.button("Search"):
             else:
                 st.write(f"**Title:** {title}")
 
-            # Make the years of experience bold
+            # Extract years of experience and make it bold
             years_of_experience = re.search(r"Years of Experience Required: (.+)", experience)
             if years_of_experience:
                 years_of_experience = years_of_experience.group(1)
                 st.write(f"**Years of Experience Required:** {years_of_experience}")
             else:
                 st.write(f"**Experience:** {experience}")
-
-            if job_id < num_postings - 1:
-                st.markdown("---") # Seperating each job from one another.
+                
+            # Seperating Job postings from each other.
+            if job_id_displayed < num_postings:
+                st.markdown("---") 
 
             # experience = re.sub(pattern, r'**\1 \2**', experience)
             
