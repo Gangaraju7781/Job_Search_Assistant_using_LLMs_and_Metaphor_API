@@ -50,9 +50,12 @@ if st.button("Search"):
 
         pattern = r"(\d+\.?\d*) (years|year)"
 
+        # Initiating Counter
+        job_id = 0
+
         # Iterate through each job link in the search results of Metaphor API
         for i, link in enumerate(contents_result.contents):
-            
+            job_id += 1
             # Extracting the content of the link
             link_content = link.extract
 
@@ -91,7 +94,7 @@ if st.button("Search"):
             experience = re.sub(r"(\d+\+?)(\s*)(years|year)", r'**\1\2\3**', experience)
 
             # Display the information in separate lines
-            job_id = i + 1
+            # job_id = i + 1
             st.write(f"**Job ID: {job_id}**")
             company_name = company.split(':')[-1].strip()  # Extract the company name
             st.write(f"**Company:** {company_name}")  # Make Company Name bold
@@ -114,7 +117,7 @@ if st.button("Search"):
             else:
                 st.write(f"**Experience:** {experience}")
 
-            if i < num_postings - 1:
+            if job_id < num_postings - 1:
                 st.markdown("---") # Seperating each job from one another.
 
             # experience = re.sub(pattern, r'**\1 \2**', experience)
