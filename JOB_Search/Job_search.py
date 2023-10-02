@@ -87,14 +87,35 @@ if st.button("Search"):
             title = lines[1] if len(lines) > 1 else ""
             experience = lines[2] if len(lines) > 2 else ""
 
-            experience = re.sub(pattern, r'**\1 \2**', experience)
-            
+            # Extract numbers and years to make them bold
+            experience = re.sub(r"(\d+\+?)(\s*)(years|year)", r'**\1\2\3**', experience)
+
+            # Display the information in separate lines
             job_id = i + 1
             st.write(f"**Job ID: {job_id}**")
-            st.write(f"{company}")
-            st.write(f"Job Posting Link: {url}")
-            st.write(f"{title}")
-            st.write(f"{experience}")
-            
+            company_name = company.split(':')[-1].strip()  # Extract the company name
+            st.write(f"**Company:** {company_name}")  # Make Company Name bold
+            st.write(f"**Job Posting Link:** {url}")  # Make the job posting link bold
+            st.write(f"**Title:** {title}")  # Make the job title bold
+    
+            years_of_experience = re.search(r"Years of Experience Required: (.+)", experience)
+            if years_of_experience:
+                years_of_experience = years_of_experience.group(1)
+                st.write(f"**Years of Experience Required:** {years_of_experience}")
+            else:
+                st.write(f"**Experience:** {experience}")
+
             if i < num_postings - 1:
                 st.markdown("---") # Seperating each job from one another.
+
+            # experience = re.sub(pattern, r'**\1 \2**', experience)
+            
+            # job_id = i + 1
+            # st.write(f"**Job ID: {job_id}**")
+            # st.write(f"{company}")
+            # st.write(f"Job Posting Link: {url}")
+            # st.write(f"{title}")
+            # st.write(f"{experience}")
+            
+            # if i < num_postings - 1:
+            #     st.markdown("---") # Seperating each job from one another.
