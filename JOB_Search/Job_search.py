@@ -96,8 +96,17 @@ if st.button("Search"):
             company_name = company.split(':')[-1].strip()  # Extract the company name
             st.write(f"**Company:** {company_name}")  # Make Company Name bold
             st.write(f"**Job Posting Link:** {url}")  # Make the job posting link bold
-            st.write(f"**Title:** {title}")  # Make the job title bold
-    
+            # st.write(f"**Title:** {title}")  
+            
+            # Make the job title bold
+            job_title_match = re.search(r"Title: (.+)", title)
+            if job_title_match:
+                job_title = job_title_match.group(1)
+                st.write(f"**Job Title:** {job_title}")
+            else:
+                st.write(f"**Title:** {title}")
+
+            # Make the years of experience bold
             years_of_experience = re.search(r"Years of Experience Required: (.+)", experience)
             if years_of_experience:
                 years_of_experience = years_of_experience.group(1)
