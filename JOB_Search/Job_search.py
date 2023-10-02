@@ -32,7 +32,7 @@ if st.button("Search"):
         SYSTEM_MESSAGE = "You are a helpful assistant that generates search queries based on user questions. Only generate one search query."
 
         completion = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": SYSTEM_MESSAGE},
                 {"role": "user", "content": USER_QUESTION},
@@ -41,7 +41,7 @@ if st.button("Search"):
 
         query = completion.choices[0].message.content
         search_response = metaphor.search(
-            query, num_results=num_postings, use_autoprompt=True, start_published_date="2023-08-15"
+            query, num_results=num_postings, use_autoprompt=True, start_published_date="2023-07-15"
         )
 
         SYSTEM_MESSAGE = "Just give me the Company Name, Job Title, Years of Experience Required for the job"
